@@ -1,0 +1,13 @@
+button{
+    width:200px;
+    height:200px;
+    background-size:100%;
+    background-repeat: no-repeat;
+    display:inline-block;
+    float: left;
+    margin-left:40px;
+    cursor: pointer;
+}
+ul{
+    list-style: none;
+}
