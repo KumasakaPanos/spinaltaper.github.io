@@ -37,37 +37,30 @@ var duplicate;
 var imageID;
 
 function imageRender(){
-  if (numberOfRenders<25){
-    numberOfRenders+=1;
-    for(var i=0;i<3;){
-      i=randImg(i);
-    }
-    if(arrayid===1){
-      for (var j=0;j<pictureImageArray1.length;j++){
-        placeImages(j,pictureImageArray1[j]);}
-    }
-    if(arrayid===2){
-      for (var j=0;j<pictureImageArray1.length;j++){
-        placeImages(j,pictureImageArray2[j]);}
-    }
-    if(arrayid===2){
-      pictureImageArray1=[];
-      arrayid=1;
-    }
-    else{
-      pictureImageArray2=[];
-      arrayid=2;
-    }
+  for(var i=0;i<3;){
+    i=randImg(i);
   }
-  if(numberOfRenders===26){
-    changePage();
+  if(arrayid===1){
+    for (var j=0;j<pictureImageArray1.length;j++){
+      placeImages(j,pictureImageArray1[j]);}
   }
-  if(numberOfRenders>26){
-    console.log('Well this should\'nt be displaying.')
+  if(arrayid===2){
+    for (var j=0;j<pictureImageArray1.length;j++){
+      placeImages(j,pictureImageArray2[j]);}
+  }
+  if(arrayid===2){
+    pictureImageArray1=[];
+    arrayid=1;
+  }
+  else{
+    pictureImageArray2=[];
+    arrayid=2;
   }
 }
-function changePage(){
 
+function changePage(){
+  document.getElementById('buttons').style.visibility='hidden';
+  chartMake()
 }
 function randImg(i){
   var generatedNumber=Math.floor(Math.random()*pictureFileName.length);
@@ -114,9 +107,57 @@ function placeImages(i,pictureIndex){
   button.style.zIndex=pictureIndex;
 }
 function onClick(buttonStyle){
-  console.log(buttonStyle.style.zIndex);
-  images[buttonStyle.style.zIndex].clicks+=1;
-  imageRender();
+  if (numberOfRenders<25){
+    numberOfRenders+=1;
+    console.log(buttonStyle.style.zIndex);
+    images[buttonStyle.style.zIndex].clicks+=1;
+    imageRender();}
+  if(numberOfRenders===25){
+    changePage();
+  }
+  if(numberOfRenders>25){
+    console.log('Well this should\'nt be displaying.')
+  }
+}
+function chartMake(){
+  var ctx= document.getElementById('Chart');
+  var finishedChart= new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: [images[0].id, images[1].id, images[2].id, images[3].id, images[4].id, images[5].id, images[6].id, images[7].id, images[8].id, images[9].id, images[10].id, images[11].id, images[12].id, images[13].id, images[14].id, images[15].id, images[16].id, images[17].id, images[18].id, images[19].id],
+      datasets: [{
+        label: '# of Votes',
+        data: [images[0].clicks, images[1].clicks, images[2].clicks, images[3].clicks, images[4].clicks, images[5].clicks, images[6].clicks, images[7].clicks, images[8].clicks, images[9].clicks, images[10].clicks, images[11].clicks, images[12].clicks, images[13].clicks, images[14].clicks, images[15].clicks, images[16].clicks, images[17].clicks, images[18].clicks, images[19].clicks],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+  console.log(ctx);
 }
 //This makes objects.
 for(var z=0;z<pictureFileName.length;z++){
