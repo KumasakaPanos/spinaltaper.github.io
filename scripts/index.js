@@ -1,10 +1,6 @@
 'usestrict';
 var pictureFileName=[];
-
-// counter
-
-// create object
-// set image list
+//Creation of Image Array
 pictureFileName = new Array();
 pictureFileName[0]='img/bag.jpg';
 pictureFileName[1]='img/banana.jpg';
@@ -26,28 +22,31 @@ pictureFileName[16]='img/unicorn.jpg';
 pictureFileName[17]='img/usb.gif';
 pictureFileName[18]='img/water-can.jpg';
 pictureFileName[19]='img/wine-glass.jpg';
+//Creation of miscellaneous variables
 var numberOfRenders=0;
-var buttonPress=document.getElementsByClassName('button');
 var arrayid=1;
 var pictureImageArray1=new Array;
 var pictureImageArray2=new Array;
 var title;
 var images=[];
 var duplicate;
-var imageID;
 
+//This function determines the images to be displayed.
 function imageRender(){
   for(var i=0;i<3;){
+  //Creates 3 random images from 0-19, one for each button.
     i=randImg(i);
   }
   if(arrayid===1){
+  //arrayid determines which of the two pictureImageArray arrays information is pulled from.
     for (var j=0;j<pictureImageArray1.length;j++){
       placeImages(j,pictureImageArray1[j]);}
   }
   if(arrayid===2){
-    for (var j=0;j<pictureImageArray1.length;j++){
+    for (j=0;j<pictureImageArray1.length;j++){
       placeImages(j,pictureImageArray2[j]);}
   }
+  //Switch from one array to another.
   if(arrayid===2){
     pictureImageArray1=[];
     arrayid=1;
@@ -58,13 +57,18 @@ function imageRender(){
   }
 }
 
+
 function changePage(){
+//This is called on the 26th press, it switches the buttons to invisibility.
   document.getElementById('buttons').style.visibility='hidden';
-  chartMake()
+  chartMake();
 }
 function randImg(i){
+//Creates a random number from between 0 to the number of pictures.
   var generatedNumber=Math.floor(Math.random()*pictureFileName.length);
+  //dupliCheck is given a number and returns a boolean
   duplicate=dupliCheck(generatedNumber);
+  //If it was not a duplicate, push it onto the array and move onto the next button.
   if (duplicate===false){
     if(arrayid===1){
       pictureImageArray1.push(generatedNumber);
@@ -75,10 +79,12 @@ function randImg(i){
       return(i+1);
     }
   }
+  //If it was a duplicate, go again.
   else{
     return(i);}
 }
 function dupliCheck(number){
+  //Passed the number from randImg, check it against both the current pictureImageArray and the previous one. If there is a match, return false, else return true.
   duplicate=false;
   if(pictureImageArray1.includes(number)){
     duplicate=true;
@@ -88,7 +94,8 @@ function dupliCheck(number){
   }
   return duplicate;
 }
-function ImageObject(title,url,index){
+//Constructor function for image object.
+function ImageObject(title,url){
   this.name=title;
   this.alt=title;
   this.id=title;
@@ -96,6 +103,7 @@ function ImageObject(title,url,index){
   this.clicks=0;
   this.views=0;
 }
+//This places the image on its matching button.
 function placeImages(i,pictureIndex){
   console.log(arrayid);
   console.log(pictureIndex);
@@ -106,6 +114,7 @@ function placeImages(i,pictureIndex){
   button.style.backgroundImage='url('+images[pictureIndex].url+')';
   button.style.zIndex=pictureIndex;
 }
+//When the button is clicked, check if there's been 25 renders. If there has, store the current object array and make a table. If not, place the images again.
 function onClick(buttonStyle){
   if (numberOfRenders<25){
     numberOfRenders+=1;
@@ -113,12 +122,14 @@ function onClick(buttonStyle){
     images[buttonStyle.style.zIndex].clicks+=1;
     imageRender();}
   if(numberOfRenders===25){
+    localStorage.setItem('storedImages',JSON.stringify(images));
     changePage();
   }
   if(numberOfRenders>25){
     console.log('Well this should\'nt be displaying.')
   }
 }
+//This is just the table creation function.
 function chartMake(){
   var ctx= document.getElementById('Chart');
   var finishedChart= new Chart(ctx, {
@@ -148,23 +159,34 @@ function chartMake(){
       }]
     },
     options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
     }
-});
+  });
   console.log(ctx);
 }
-//This makes objects.
-for(var z=0;z<pictureFileName.length;z++){
-  var url=pictureFileName[z];
-  title=pictureFileName[z].substring(0,pictureFileName[z].length-4);
-  title=title.substring(4,title.length);
-  var object=new ImageObject(title,url,z);
-  images.push(object);
+//This runs at page load. It tries to load an object array from local storage into the one generated for this session.
+var localImages=JSON.parse(localStorage.getItem('storedImages'));
+//If there is an storedImages array in localStorage, copy it into the current object array.
+if(localImages){
+  for(var z=0;z<localImages.length;z++){
+    localImages=JSON.parse(localStorage.getItem('storedImages'));
+    console.log('local');
+    console.log(localImages[z]);
+    images[z]=localImages[z];}}
+//If there is not one, make one and populate it.
+else{
+  for(z=0;z<pictureFileName.length;z++){
+    var url=pictureFileName[z];
+    title=pictureFileName[z].substring(0,pictureFileName[z].length-4);
+    title=title.substring(4,title.length);
+    var object=new ImageObject(title,url,z);
+    images.push(object);
+  }
 }
 imageRender();
