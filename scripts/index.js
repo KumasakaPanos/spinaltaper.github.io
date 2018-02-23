@@ -31,8 +31,30 @@ var title;
 var images=[];
 var duplicate;
 
+(function onBoot(){
+  //This runs at page load. It tries to load an object array from local storage into the one generated for this session.
+  var localImages=JSON.parse(localStorage.getItem('storedImages'));
+  //If there is an storedImages array in localStorage, copy it into the current object array.
+  if(localImages){
+    for(var z=0;z<localImages.length;z++){
+      localImages=JSON.parse(localStorage.getItem('storedImages'));
+      console.log('local');
+      console.log(localImages[z]);
+      images[z]=localImages[z];}}
+  //If there is not one, make one and populate it.
+  else{
+    for(z=0;z<pictureFileName.length;z++){
+      var url=pictureFileName[z];
+      title=pictureFileName[z].substring(0,pictureFileName[z].length-4);
+      title=title.substring(4,title.length);
+      var object=new ImageObject(title,url,z);
+      images.push(object);
+    }
+  }
+})();
+
 //This function determines the images to be displayed.
-function imageRender(){
+(function imageRender(){
   for(var i=0;i<3;){
   //Creates 3 random images from 0-19, one for each button.
     i=randImg(i);
@@ -55,7 +77,7 @@ function imageRender(){
     pictureImageArray2=[];
     arrayid=2;
   }
-}
+}());
 
 
 function changePage(){
@@ -132,6 +154,7 @@ function onClick(buttonStyle){
 //This is just the table creation function.
 function chartMake(){
   var ctx= document.getElementById('Chart');
+
   var finishedChart= new Chart(ctx, {
     type: 'bar',
     data: {
@@ -170,23 +193,3 @@ function chartMake(){
   });
   console.log(ctx);
 }
-//This runs at page load. It tries to load an object array from local storage into the one generated for this session.
-var localImages=JSON.parse(localStorage.getItem('storedImages'));
-//If there is an storedImages array in localStorage, copy it into the current object array.
-if(localImages){
-  for(var z=0;z<localImages.length;z++){
-    localImages=JSON.parse(localStorage.getItem('storedImages'));
-    console.log('local');
-    console.log(localImages[z]);
-    images[z]=localImages[z];}}
-//If there is not one, make one and populate it.
-else{
-  for(z=0;z<pictureFileName.length;z++){
-    var url=pictureFileName[z];
-    title=pictureFileName[z].substring(0,pictureFileName[z].length-4);
-    title=title.substring(4,title.length);
-    var object=new ImageObject(title,url,z);
-    images.push(object);
-  }
-}
-imageRender();
